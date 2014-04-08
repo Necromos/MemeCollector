@@ -1,0 +1,2 @@
+serviceClass: com.project.memecollector.client.MemeService
+path: FF173328B468ADB23AB03E1C56274D95.gwt.rpc
