@@ -4,7 +4,6 @@
 	<inherits name="com.google.gwt.user.User" />
 	<source path="client" />
 	<source path="shared" />
-	<entry-point
-		class="com.project.memecollector.client.MemeCollector">
+	<entry-point class="com.project.memecollector.client.MemeCollector">
 	</entry-point>
 </module>
