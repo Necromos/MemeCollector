@@ -1,0 +1,2 @@
+serviceClass: com.project.memecollector.client.AuthenticationService
+path: 34C0FADBE4A342AD166404A0858F8834.gwt.rpc

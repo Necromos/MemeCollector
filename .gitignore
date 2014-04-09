@@ -33,3 +33,5 @@ test-output
 # syntax: regexp
 # ^\.pc/
 
+war/WEB-INF/classes/
+gwt-unitCache/

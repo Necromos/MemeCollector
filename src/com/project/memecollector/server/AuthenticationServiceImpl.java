@@ -27,4 +27,14 @@ public class AuthenticationServiceImpl extends RemoteServiceServlet implements A
 		return false;
 	}
 
+	@Override
+	public Long getUserId(String username) {
+		for(User user : this.userDB){
+			if(user.getUsername().compareTo(username) == 0){
+				return user.getId();
+			}
+		}
+		return null;
+	}
+
 }

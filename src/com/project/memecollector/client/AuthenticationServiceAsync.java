@@ -6,5 +6,7 @@ public interface AuthenticationServiceAsync {
 
 	public void checkCredentials(String username, String password,
 			AsyncCallback<Boolean> callback);
+
+	void getUserId(String username, AsyncCallback<Long> callback);
 	
 }

@@ -1,7 +1,10 @@
 package com.project.memecollector.client;
 
+import java.util.List;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.shared.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -12,6 +15,8 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.user.client.ui.TextBox;
+import com.project.memecollector.shared.models.Meme;
+import com.project.memecollector.shared.models.User;
 
 public class MemeCollector implements EntryPoint {
 
@@ -41,6 +46,8 @@ public class MemeCollector implements EntryPoint {
 		RootPanel.get("usernameLabelHolder").add(usernameLabel);
 		RootPanel.get("logoutButtonHolder").add(logoutButton);
 		
+		final User user = new User();
+		
 		loginButton.addClickHandler(new ClickHandler(){
 			@Override
 			public void onClick(ClickEvent event) {
@@ -59,6 +66,21 @@ public class MemeCollector implements EntryPoint {
 							DOM.getElementById("loginForm").getStyle().setDisplay(Display.NONE);
 							DOM.getElementById("logged").getStyle().setDisplay(Display.INLINE);
 							DOM.getElementById("memeMenu").getStyle().setDisplay(Display.BLOCK);
+							authService.getUserId(username, new AsyncCallback<Long>(){
+
+								@Override
+								public void onFailure(Throwable caught) {
+									DOM.getElementById("failedAsyncAlert").getStyle().setDisplay(Display.BLOCK);
+								}
+
+								@Override
+								public void onSuccess(Long result) {
+									user.setId(result);
+									user.setUsername(username);
+									getAllUserMemes(user.getId());
+								}
+								
+							});
 						}
 						else {
 							DOM.getElementById("noUserAlert").getStyle().setDisplay(Display.BLOCK);
@@ -67,6 +89,30 @@ public class MemeCollector implements EntryPoint {
 					
 				});
 			}
+		});
+	}
+	
+	void getAllUserMemes(Long userId){
+		memeService.showAllMemes(userId, new AsyncCallback<List<Meme>>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				DOM.getElementById("failedAsyncAlert").getStyle().setDisplay(Display.BLOCK);				
+			}
+
+			@Override
+			public void onSuccess(List<Meme> result) {
+				DOM.getElementById("allMemeContainer").getStyle().setDisplay(Display.BLOCK);
+				int currId = 1;
+				for(Meme m : result){
+					Element div = DOM.createDiv();
+					String currentElement = "meme"+currId;
+					div.setAttribute("id", currentElement);
+					DOM.appendChild(DOM.getElementById("allMemeContainer"), div);
+					
+				}
+			}
+			
 		});
 	}
 
