@@ -21,12 +21,10 @@ public class MemeServiceImpl extends RemoteServiceServlet implements MemeService
 	}
 	
 	@Override
-	public void addMeme(Long userId, Meme meme) {
+	public Boolean addMeme(Long userId, Meme meme) {
 		meme.setUserId(userId);
 		meme.setId(counter++);
-		if(this.memeDB.add(meme)){
-			System.out.println("added");
-		}
+		return this.memeDB.add(meme);
 	}
 
 	@Override

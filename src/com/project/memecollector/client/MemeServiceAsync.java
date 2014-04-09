@@ -6,7 +6,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.project.memecollector.shared.models.Meme;
 
 public interface MemeServiceAsync {
-	void addMeme(Long userId, Meme meme, AsyncCallback<Void> callback);
+	void addMeme(Long userId, Meme meme, AsyncCallback<Boolean> callback);
 	void editMeme(Long userId, Meme editedMeme, AsyncCallback<Void> callback);
 	void removeMeme(Long userId, Long id, AsyncCallback<Void> callback);
 	void showById(Long userId, Long id, AsyncCallback<Meme> callback);

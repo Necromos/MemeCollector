@@ -102,28 +102,31 @@ public class MemeCollector implements EntryPoint {
 		RootPanel.get("titleInput").add(titleTextBox);
 		RootPanel.get("urlInput").add(urlTextBox);
 		
-		Element addNewMemeButton = DOM.getElementById("addNewMeme");
-		DOM.sinkEvents(addNewMemeButton, Event.ONCLICK);
-		DOM.setEventListener(addNewMemeButton, new EventListener() {
+		Button addNewButton = new Button("Dodaj");
+		addNewButton.setStyleName("btn btn-success");
+		RootPanel.get("addNewMeme").add(addNewButton);
+		addNewButton.addClickHandler(new ClickHandler(){
 
 			@Override
-			public void onBrowserEvent(Event event) {
+			public void onClick(ClickEvent event) {
 				Meme meme = new Meme(titleTextBox.getText(),urlTextBox.getText());
-				memeService.addMeme(user.getId(), meme, new AsyncCallback<Void>() {
+				memeService.addMeme(user.getId(), meme, new AsyncCallback<Boolean>() {
 
 					@Override
 					public void onFailure(Throwable caught) {
 						showAsyncAlert();
+						System.out.println(caught);
 					}
 
 					@Override
-					public void onSuccess(Void result) {
+					public void onSuccess(Boolean result) {
 						DOM.getElementById("succesAddAlert").getStyle().setDisplay(Display.BLOCK);
 					}
 				});
 			}
 			
 		});
+
 		
 		
 		
@@ -201,6 +204,7 @@ public class MemeCollector implements EntryPoint {
 
 			@Override
 			public void onSuccess(List<Meme> result) {
+				DOM.getElementById("allMemeContainer").setInnerHTML("");
 				int currId = 1;
 				for(Meme m : result){
 					Element div = DOM.createDiv();
