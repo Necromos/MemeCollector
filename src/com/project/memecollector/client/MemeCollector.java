@@ -9,6 +9,8 @@ import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.EventListener;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.Label;
@@ -26,6 +28,7 @@ public class MemeCollector implements EntryPoint {
 	
 	@Override
 	public void onModuleLoad() {
+		final User user = new User();
 		// Login
 		final TextBox loginTextBox = new TextBox();
 		final PasswordTextBox passwordTextBox = new PasswordTextBox();
@@ -46,7 +49,46 @@ public class MemeCollector implements EntryPoint {
 		RootPanel.get("usernameLabelHolder").add(usernameLabel);
 		RootPanel.get("logoutButtonHolder").add(logoutButton);
 		
-		final User user = new User();
+		// Nav menu
+		Element allMemes = RootPanel.get("showAllMemesMenu").getElement();
+		DOM.sinkEvents(allMemes, Event.ONCLICK);
+		DOM.setEventListener(allMemes, new EventListener() {
+			
+			@Override
+			public void onBrowserEvent(Event event) {
+				DOM.getElementById("showAllMemesMenu").setClassName("active");
+				DOM.getElementById("addMemeMenu").setClassName("");
+				DOM.getElementById("searchMemeMenu").setClassName("");
+				DOM.getElementById("allMemeContainer").getStyle().setDisplay(Display.BLOCK);
+				getAllUserMemes(user.getId());
+			}
+		});
+		Element addMeme = RootPanel.get("addMemeMenu").getElement();
+		DOM.sinkEvents(addMeme, Event.ONCLICK);
+		DOM.setEventListener(addMeme, new EventListener() {
+			
+			@Override
+			public void onBrowserEvent(Event event) {
+				DOM.getElementById("addMemeMenu").setClassName("active");
+				DOM.getElementById("showAllMemesMenu").setClassName("");
+				DOM.getElementById("searchMemeMenu").setClassName("");
+				DOM.getElementById("allMemeContainer").getStyle().setDisplay(Display.NONE);
+			}
+		});
+		Element searchMeme = RootPanel.get("searchMemeMenu").getElement();
+		DOM.sinkEvents(searchMeme, Event.ONCLICK);
+		DOM.setEventListener(searchMeme, new EventListener() {
+			
+			@Override
+			public void onBrowserEvent(Event event) {
+				DOM.getElementById("searchMemeMenu").setClassName("active");
+				DOM.getElementById("showAllMemesMenu").setClassName("");
+				DOM.getElementById("addMemeMenu").setClassName("");
+				DOM.getElementById("allMemeContainer").getStyle().setDisplay(Display.NONE);
+			}
+		});
+		
+		
 		
 		loginButton.addClickHandler(new ClickHandler(){
 			@Override
@@ -62,10 +104,13 @@ public class MemeCollector implements EntryPoint {
 					@Override
 					public void onSuccess(Boolean result) {
 						if (result){
+							loginTextBox.setText("");
+							passwordTextBox.setText("");
 							usernameLabel.setText(username);
 							DOM.getElementById("loginForm").getStyle().setDisplay(Display.NONE);
 							DOM.getElementById("logged").getStyle().setDisplay(Display.INLINE);
 							DOM.getElementById("memeMenu").getStyle().setDisplay(Display.BLOCK);
+							DOM.getElementById("allMemeContainer").getStyle().setDisplay(Display.BLOCK);
 							authService.getUserId(username, new AsyncCallback<Long>(){
 
 								@Override
@@ -90,6 +135,19 @@ public class MemeCollector implements EntryPoint {
 				});
 			}
 		});
+		
+		logoutButton.addClickHandler(new ClickHandler(){
+
+			@Override
+			public void onClick(ClickEvent event) {
+				user.clear();
+				DOM.getElementById("loginForm").getStyle().setDisplay(Display.BLOCK);
+				DOM.getElementById("logged").getStyle().setDisplay(Display.NONE);
+				DOM.getElementById("memeMenu").getStyle().setDisplay(Display.NONE);
+				DOM.getElementById("allMemeContainer").getStyle().setDisplay(Display.NONE);
+			}
+			
+		});
 	}
 	
 	void getAllUserMemes(Long userId){
@@ -102,14 +160,22 @@ public class MemeCollector implements EntryPoint {
 
 			@Override
 			public void onSuccess(List<Meme> result) {
-				DOM.getElementById("allMemeContainer").getStyle().setDisplay(Display.BLOCK);
 				int currId = 1;
 				for(Meme m : result){
 					Element div = DOM.createDiv();
 					String currentElement = "meme"+currId;
 					div.setAttribute("id", currentElement);
+					div.setClassName("row");
 					DOM.appendChild(DOM.getElementById("allMemeContainer"), div);
-					
+					Element title = DOM.createDiv();
+					Element img = DOM.createImg();
+					title.setClassName("col-md-4");
+					title.setInnerText(m.getTitle());
+					img.setClassName("col-md-8");
+					img.setAttribute("src", m.getLinkToMeme());
+					DOM.appendChild(DOM.getElementById(currentElement),title);
+					DOM.appendChild(DOM.getElementById(currentElement),img);
+					currId++;
 				}
 			}
 			

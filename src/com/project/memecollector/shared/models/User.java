@@ -34,4 +34,9 @@ public class User implements Serializable{
 	public void setPassword(String password) {
 		this.password = password;
 	}
+	public void clear(){
+		this.id = null;
+		this.username = null;
+		this.password = null;
+	}
 }
