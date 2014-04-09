@@ -8,8 +8,12 @@
     		display: inline;
     	}
     	
-    	#succesAddAlert, #noUserAlert, #failedAsyncAlert, #memeMenu, #logged, #allMemeContainer, #addMemeContainer, #searchMemeContainer{
+    	#succesRemoveAlert, #nothingAlert, #wrongIdAlert, #succesAddAlert, #noUserAlert, #failedAsyncAlert, #memeMenu, #logged, #allMemeContainer, #addMemeContainer, #searchMemeContainer{
     		display: none;
+    	}
+    	img {
+    		width:300px !important;
+    		height:300px;
     	}
     </style>
     <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css">
@@ -60,9 +64,21 @@
 				<button type="button" class="close" data-hide="alert" aria-hidden="true">&times;</button>
 				<strong>Ooopps!</strong> Coś poszło nie tak z żądaniem :o
 			</div>
+			<div id="wrongIdAlert" class="alert alert-warning alert-dismissable">
+				<button type="button" class="close" data-hide="alert" aria-hidden="true">&times;</button>
+				<strong>Ooopps!</strong> Zły format ID :/
+			</div>
+			<div id="nothingAlert" class="alert alert-warning alert-dismissable">
+				<button type="button" class="close" data-hide="alert" aria-hidden="true">&times;</button>
+				<strong>Ooopps!</strong> Nie ma takiego Meme :/
+			</div>
 			<div id="succesAddAlert" class="alert alert-success alert-dismissable">
 				<button type="button" class="close" data-hide="alert" aria-hidden="true">&times;</button>
 				<strong>Yey!</strong> Dodany do kolekcji ;>
+			</div>
+			<div id="succesRemoveAlert" class="alert alert-danger alert-dismissable">
+				<button type="button" class="close" data-hide="alert" aria-hidden="true">&times;</button>
+				<strong>Nieeeee!</strong> Usunięto Meme :/
 			</div>
 		</div>
 		<div class="row">
@@ -88,7 +104,19 @@
 				</div>
 			</div>
 			<div id="searchMemeContainer" class="col-md-12">
-			
+				<div class="row">
+					<div id="searchById" class="col-md-4"><label>Szukaj po ID:</label></div>
+					<div id="searchByTitle" class="col-md-4"><label>Szukaj po tytule:</label></div>
+					<div id="searchButton" class="col-md-2"></div>
+				</div>
+				<div class="row">
+					<div class="col-md-2">
+						<label id="titleHolder"></label>
+					</div>
+					<div class="col-md-10">
+						<img id="imgHolder" />
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>

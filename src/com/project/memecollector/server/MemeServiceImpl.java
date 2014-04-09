@@ -75,7 +75,7 @@ public class MemeServiceImpl extends RemoteServiceServlet implements MemeService
 	@Override
 	public Meme showByTitle(Long userId, String title) {
 		for(Meme m : this.memeDB){
-			if(m.getTitle() == title && m.getUserId() == userId){
+			if(m.getTitle().compareTo(title) == 0 && m.getUserId() == userId){
 				return m;
 			}
 		}

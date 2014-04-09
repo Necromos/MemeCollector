@@ -126,9 +126,44 @@ public class MemeCollector implements EntryPoint {
 			}
 			
 		});
+		
+		//Search
+		
+		final TextBox searchByIdTextBox = new TextBox();
+		final TextBox searchByTitleTextBox = new TextBox();
+		Button searchButton = new Button("Szukaj");
+		searchByIdTextBox.setStyleName("form-control");
+		searchByTitleTextBox.setStyleName("form-control");
+		searchButton.setStyleName("btn btn-success");
+		
+		RootPanel.get("searchById").add(searchByIdTextBox);
+		RootPanel.get("searchByTitle").add(searchByTitleTextBox);
+		RootPanel.get("searchButton").add(searchButton);
+		
+		searchButton.addClickHandler(new ClickHandler(){
 
-		
-		
+			@Override
+			public void onClick(ClickEvent event) {
+				String id = searchByIdTextBox.getText();
+				String title = searchByTitleTextBox.getText(); 
+				if(id.compareTo("") != 0){
+					try
+					{
+						Long l = Long.parseLong(id);
+						getUserMemeById(user.getId(), l);
+					}
+					catch(NumberFormatException e)
+					{
+						DOM.getElementById("wrongIdAlert").getStyle().setDisplay(Display.BLOCK);
+					}
+					
+				}
+				else if(title.compareTo("") != 0){
+					getUserMemeByTitle(user.getId(),title);
+				}
+			}
+			
+		});
 		
 		loginButton.addClickHandler(new ClickHandler(){
 			@Override
@@ -194,7 +229,7 @@ public class MemeCollector implements EntryPoint {
 		DOM.getElementById("failedAsyncAlert").getStyle().setDisplay(Display.BLOCK);
 	}
 	
-	void getAllUserMemes(Long userId){
+	void getAllUserMemes(final Long userId){
 		memeService.showAllMemes(userId, new AsyncCallback<List<Meme>>(){
 
 			@Override
@@ -205,10 +240,11 @@ public class MemeCollector implements EntryPoint {
 			@Override
 			public void onSuccess(List<Meme> result) {
 				DOM.getElementById("allMemeContainer").setInnerHTML("");
-				int currId = 1;
 				for(Meme m : result){
 					Element div = DOM.createDiv();
-					String currentElement = "meme"+currId;
+					Button deleteButton = new Button("X");
+					deleteButton.setStyleName("btn btn-danger");
+					String currentElement = "meme"+m.getId();
 					div.setAttribute("id", currentElement);
 					div.setClassName("row");
 					DOM.appendChild(DOM.getElementById("allMemeContainer"), div);
@@ -216,14 +252,83 @@ public class MemeCollector implements EntryPoint {
 					Element img = DOM.createImg();
 					title.setClassName("col-md-4");
 					title.setInnerText(m.getTitle());
-					img.setClassName("col-md-8");
+					img.setClassName("col-md-4");
 					img.setAttribute("src", m.getLinkToMeme());
 					DOM.appendChild(DOM.getElementById(currentElement),title);
 					DOM.appendChild(DOM.getElementById(currentElement),img);
-					currId++;
+					RootPanel.get(currentElement).add(deleteButton);
+					deleteButton.addClickHandler(new ClickHandler() {
+						
+						@Override
+						public void onClick(ClickEvent event) {
+							String sId = DOM.getParent(event.getRelativeElement()).getAttribute("id");
+							Long id = Long.parseLong(sId.substring(4));
+							deleteMeme(userId, id);
+							getAllUserMemes(userId);
+						}
+					});
 				}
 			}
 			
+		});
+	}
+	
+	void getUserMemeById(Long userId, Long id){
+		memeService.showById(userId, id, new AsyncCallback<Meme>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				showAsyncAlert();
+			}
+
+			@Override
+			public void onSuccess(Meme result) {
+				if (result == null){
+					DOM.getElementById("nothingAlert").getStyle().setDisplay(Display.BLOCK);
+				}
+				else {
+					DOM.getElementById("titleHolder").setInnerText(result.getTitle());
+					DOM.getElementById("imgHolder").setAttribute("src", result.getLinkToMeme());
+				}
+			}
+		});
+	}
+	
+	void getUserMemeByTitle(Long userId, String title){
+		memeService.showByTitle(userId, title, new AsyncCallback<Meme>(){
+
+			@Override
+			public void onFailure(Throwable caught) {
+				showAsyncAlert();
+			}
+
+			@Override
+			public void onSuccess(Meme result) {
+				if (result == null){
+					DOM.getElementById("nothingAlert").getStyle().setDisplay(Display.BLOCK);
+				}
+				else {
+					DOM.getElementById("titleHolder").setInnerText(result.getTitle());
+					DOM.getElementById("imgHolder").setAttribute("src", result.getLinkToMeme());
+				}
+			}
+			
+		});
+	}
+	
+	void deleteMeme(Long userId, Long id){
+		memeService.removeMeme(userId, id, new AsyncCallback<Void>() {
+
+			@Override
+			public void onFailure(Throwable caught) {
+				showAsyncAlert();
+			}
+
+			@Override
+			public void onSuccess(Void result) {
+				DOM.getElementById("succesRemoveAlert").getStyle().setDisplay(Display.BLOCK);
+			}
+		
 		});
 	}
 
