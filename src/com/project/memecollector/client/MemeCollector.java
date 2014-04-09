@@ -50,7 +50,7 @@ public class MemeCollector implements EntryPoint {
 		RootPanel.get("logoutButtonHolder").add(logoutButton);
 		
 		// Nav menu
-		Element allMemes = RootPanel.get("showAllMemesMenu").getElement();
+		Element allMemes = DOM.getElementById("showAllMemesMenu");
 		DOM.sinkEvents(allMemes, Event.ONCLICK);
 		DOM.setEventListener(allMemes, new EventListener() {
 			
@@ -60,10 +60,12 @@ public class MemeCollector implements EntryPoint {
 				DOM.getElementById("addMemeMenu").setClassName("");
 				DOM.getElementById("searchMemeMenu").setClassName("");
 				DOM.getElementById("allMemeContainer").getStyle().setDisplay(Display.BLOCK);
+				DOM.getElementById("addMemeContainer").getStyle().setDisplay(Display.NONE);
+				DOM.getElementById("searchMemeContainer").getStyle().setDisplay(Display.NONE);
 				getAllUserMemes(user.getId());
 			}
 		});
-		Element addMeme = RootPanel.get("addMemeMenu").getElement();
+		Element addMeme = DOM.getElementById("addMemeMenu");
 		DOM.sinkEvents(addMeme, Event.ONCLICK);
 		DOM.setEventListener(addMeme, new EventListener() {
 			
@@ -73,9 +75,11 @@ public class MemeCollector implements EntryPoint {
 				DOM.getElementById("showAllMemesMenu").setClassName("");
 				DOM.getElementById("searchMemeMenu").setClassName("");
 				DOM.getElementById("allMemeContainer").getStyle().setDisplay(Display.NONE);
+				DOM.getElementById("addMemeContainer").getStyle().setDisplay(Display.BLOCK);
+				DOM.getElementById("searchMemeContainer").getStyle().setDisplay(Display.NONE);
 			}
 		});
-		Element searchMeme = RootPanel.get("searchMemeMenu").getElement();
+		Element searchMeme = DOM.getElementById("searchMemeMenu");
 		DOM.sinkEvents(searchMeme, Event.ONCLICK);
 		DOM.setEventListener(searchMeme, new EventListener() {
 			
@@ -85,7 +89,40 @@ public class MemeCollector implements EntryPoint {
 				DOM.getElementById("showAllMemesMenu").setClassName("");
 				DOM.getElementById("addMemeMenu").setClassName("");
 				DOM.getElementById("allMemeContainer").getStyle().setDisplay(Display.NONE);
+				DOM.getElementById("addMemeContainer").getStyle().setDisplay(Display.NONE);
+				DOM.getElementById("searchMemeContainer").getStyle().setDisplay(Display.BLOCK);
 			}
+		});
+		
+		
+		final TextBox titleTextBox = new TextBox();
+		final TextBox urlTextBox = new TextBox();
+		titleTextBox.setStyleName("form-control");
+		urlTextBox.setStyleName("form-control");
+		RootPanel.get("titleInput").add(titleTextBox);
+		RootPanel.get("urlInput").add(urlTextBox);
+		
+		Element addNewMemeButton = DOM.getElementById("addNewMeme");
+		DOM.sinkEvents(addNewMemeButton, Event.ONCLICK);
+		DOM.setEventListener(addNewMemeButton, new EventListener() {
+
+			@Override
+			public void onBrowserEvent(Event event) {
+				Meme meme = new Meme(titleTextBox.getText(),urlTextBox.getText());
+				memeService.addMeme(user.getId(), meme, new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						showAsyncAlert();
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						DOM.getElementById("succesAddAlert").getStyle().setDisplay(Display.BLOCK);
+					}
+				});
+			}
+			
 		});
 		
 		
@@ -98,7 +135,7 @@ public class MemeCollector implements EntryPoint {
 
 					@Override
 					public void onFailure(Throwable caught) {
-						DOM.getElementById("failedAsyncAlert").getStyle().setDisplay(Display.BLOCK);
+						showAsyncAlert();
 					}
 
 					@Override
@@ -115,7 +152,7 @@ public class MemeCollector implements EntryPoint {
 
 								@Override
 								public void onFailure(Throwable caught) {
-									DOM.getElementById("failedAsyncAlert").getStyle().setDisplay(Display.BLOCK);
+									showAsyncAlert();
 								}
 
 								@Override
@@ -150,12 +187,16 @@ public class MemeCollector implements EntryPoint {
 		});
 	}
 	
+	void showAsyncAlert(){
+		DOM.getElementById("failedAsyncAlert").getStyle().setDisplay(Display.BLOCK);
+	}
+	
 	void getAllUserMemes(Long userId){
 		memeService.showAllMemes(userId, new AsyncCallback<List<Meme>>(){
 
 			@Override
 			public void onFailure(Throwable caught) {
-				DOM.getElementById("failedAsyncAlert").getStyle().setDisplay(Display.BLOCK);				
+				showAsyncAlert();		
 			}
 
 			@Override

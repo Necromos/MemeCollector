@@ -12,17 +12,21 @@ public class MemeServiceImpl extends RemoteServiceServlet implements MemeService
 	private static final long serialVersionUID = 1L;
 
 	private List<Meme> memeDB = new ArrayList<Meme>();
+	private Long counter = (long)4;
 	
 	public MemeServiceImpl(){
-		this.memeDB.add(new Meme((long)1,"Gry-fb","http://fabrykamemow.pl/uimages/services/fabrykamemow/i18n/pl_PL/201304/1366916702_by_rozbuj6_500.jpg?1366916703",(long)1));
-		this.memeDB.add(new Meme((long)2,"Yo mama - wii fit","http://d24w6bsrhbeh9d.cloudfront.net/photo/a6wx5p2_460s.jpg",(long)1));
+		this.memeDB.add(new Meme((long)1,"Joke","https://fbcdn-sphotos-c-a.akamaihd.net/hphotos-ak-frc1/t1.0-9/10003328_654516501286374_4778785600626733645_n.jpg",(long)1));
+		this.memeDB.add(new Meme((long)2,"Woops","http://d24w6bsrhbeh9d.cloudfront.net/photo/a6wx28A_460sa.gif",(long)1));
 		this.memeDB.add(new Meme((long)3,"Slap it!","http://d24w6bsrhbeh9d.cloudfront.net/photo/a8Wno8d_460sa.gif",(long)1));
 	}
 	
 	@Override
 	public void addMeme(Long userId, Meme meme) {
 		meme.setUserId(userId);
-		this.memeDB.add(meme);
+		meme.setId(counter++);
+		if(this.memeDB.add(meme)){
+			System.out.println("added");
+		}
 	}
 
 	@Override

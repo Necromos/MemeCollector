@@ -13,6 +13,17 @@ public class Meme implements Serializable {
 	
 	public Meme(){}
 	
+	public Meme(String title, String linkToMeme){
+		this.title = title;
+		this.linkToMeme = linkToMeme;
+	}
+	
+	public Meme(Long id, String title, String linkToMeme){
+		this.id = id;
+		this.title = title;
+		this.linkToMeme = linkToMeme;
+	}
+	
 	public Meme(Long id, String title, String linkToMeme, Long userId){
 		this.id = id;
 		this.title = title;

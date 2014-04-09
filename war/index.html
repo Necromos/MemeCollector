@@ -8,7 +8,7 @@
     		display: inline;
     	}
     	
-    	#noUserAlert, #failedAsyncAlert, #memeMenu, #logged, #allMemeContainer{
+    	#succesAddAlert, #noUserAlert, #failedAsyncAlert, #memeMenu, #logged, #allMemeContainer, #addMemeContainer, #searchMemeContainer{
     		display: none;
     	}
     </style>
@@ -60,6 +60,10 @@
 				<button type="button" class="close" data-hide="alert" aria-hidden="true">&times;</button>
 				<strong>Ooopps!</strong> Coś poszło nie tak z żądaniem :o
 			</div>
+			<div id="succesAddAlert" class="alert alert-success alert-dismissable">
+				<button type="button" class="close" data-hide="alert" aria-hidden="true">&times;</button>
+				<strong>Yey!</strong> Dodany do kolekcji ;>
+			</div>
 		</div>
 		<div class="row">
 			<div id="memeMenu" class="col-md-12">
@@ -75,7 +79,13 @@
 			
 			</div>
 			<div id="addMemeContainer" class="col-md-12">
-			
+				<div class="row">
+					<form>
+						<div id="titleInput"><label>Title:</label></div>
+						<div id="urlInput"><label>Url to meme:</label></div>
+						<button id="addNewMeme" class="btn btn-success">Dodaj</button>
+					</form>
+				</div>
 			</div>
 			<div id="searchMemeContainer" class="col-md-12">
 			
